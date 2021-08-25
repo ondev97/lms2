@@ -1,4 +1,6 @@
+import openpyxl as openpyxl
 from django.contrib import auth
+from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import CreateAPIView,RetrieveUpdateAPIView
@@ -359,5 +361,43 @@ def ContactForm(request):
     return Response({"message":"Email was sent successfully"}, status=200)
 
 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def users_registration(request):
+    excel_file = request.FILES["excel_file"]
+    wb = openpyxl.load_workbook(excel_file)
+    worksheet = wb["Sheet1"]
+    worksheet.delete_rows(worksheet.min_row, 1)
+
+    excel_data = list()
+    for row in worksheet.iter_rows():
+        row_data = list()
+        for cell in row:
+            row_data.append(str(cell.value))
+        excel_data.append(row_data)
+
+    users = [
+        User(username=row[0], password=make_password(row[1]))        #, first_name=row[2], last_name=row[3], email=row[4], phone_no=row[5])
+        for row in excel_data
+    ]
+    not_saved = list()
+    i = 2
+    try:
+        User.objects.bulk_create(users)
+
+    except:
+        for user in users:
+            try:
+                user.save()
+            except:
+                not_saved.append(i)
+            i+=1
+
+    return Response({
+        "count_of_all_users": len(excel_data),
+        "not_saved_lines": not_saved
+    }, status=200)
 
 
