@@ -9,7 +9,8 @@ from account.api.views import ( createuser,
                                 StudentProfileView,
                                 UpdateStudentProfileView,
                                 Allteachers,ContactForm,
-                                GetStudents)
+                                GetStudents,users_registration,
+                                resetloginview)
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
@@ -23,6 +24,8 @@ urlpatterns = [
     path('updatestudent/<int:pk>/',UpdateStudentProfileView,name='update_student'),
     path('testlogin/',TestLoginView,name='test_login'),
     path('getstudents/<int:id>/',GetStudents,name='get_students'),
+    path('reg_users/', users_registration),
+    path('deletetoken/', resetloginview),
 
     #password reset views
 
