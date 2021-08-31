@@ -58,6 +58,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     year_of_exam = models.CharField(max_length=12, null=True)
     date_joined = models.DateField(
         verbose_name='date joined', auto_now_add=True)
+    nic = models.CharField(max_length=20,null=True,blank=True,unique=True)
     last_login = models.DateField(verbose_name='last login', auto_now=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
