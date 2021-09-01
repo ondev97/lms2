@@ -829,7 +829,7 @@ def GetModulesMobile(request,pk):
                 'files': ser.data
             },
             'is_meeting': mod['is_meeting'],
-            'type': 0,
+            #'type': 0,
             'course': mod['course']
         }
         test.append(tempMod)
