@@ -834,4 +834,4 @@ def GetModulesMobile(request,pk):
         }
         test.append(tempMod)
 
-    return Response(test)
+    return Response(serializer.data)
