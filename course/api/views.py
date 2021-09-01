@@ -819,12 +819,19 @@ def GetModulesMobile(request,pk):
     for mod in serializer.data:
         mod_files = ModuleFile.objects.filter(module__id=mod['id'])
         ser = ModuleFileSerializer(mod_files, many=True)
-        mod['module_content'] = {
-            'video_url': find(mod['module_content']),
-            'content': remove(mod['module_content']),
-            'files': ser.data
+        f = find(mod['module_content'])
+        tempMod = {
+            'id': mod['id'],
+            'module_name': mod['module_name'],
+            'module_content': {
+                'video_url': f,
+                'content': remove(mod['module_content']),
+                'files': ser.data
+            },
+            'is_meeting': mod['is_meeting'],
+            'type': 0,
+            'course': mod['course']
         }
-        mod['type'] = 0
-        test.append(mod)
+        test.append(tempMod)
 
     return Response(test)
