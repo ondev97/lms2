@@ -147,6 +147,9 @@ def GetModuleFiles(request,pk):
     serializer = ModuleFileSerializer(files, many=True)
     return Response(serializer.data)
 
+
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def GetModules(request,pk):
@@ -782,3 +785,46 @@ def Upload(request):
         "uploaded": True,
         "url": cks.data['upload']
     })
+
+
+import re
+
+
+def remove(raw_html):
+    cleanr = re.compile('<figure class="media"><oembed url=.*?></oembed></figure>')
+    cleantext = re.sub(cleanr, '', raw_html)
+    return cleantext
+
+
+def find(string):
+    regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+    url = re.findall(regex, string)
+    return [x[0] for x in url]
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def GetModulesMobile(request,pk):
+    course = Course.objects.get(id=pk)
+    user = User.objects.get(id=request.user.id)
+    if user.is_teacher == False:
+        e = Enrollment.objects.filter(course=course, student__user=user)
+        if not e:
+            return Response({"message":"You have not enrolled for this course"}, status=403)
+    module = Module.objects.filter(course=course).order_by('id')
+    serializer = ModuleSerializer(module, many=True)
+
+    test = []
+
+    for mod in serializer.data:
+        mod_files = ModuleFile.objects.filter(module__id=mod['id'])
+        ser = ModuleFileSerializer(mod_files, many=True)
+        mod['module_content'] = {
+            'video_url': find(mod['module_content']),
+            'content': remove(mod['module_content']),
+            'files': ser.data
+        }
+        mod['type'] = 0
+        test.append(mod)
+
+    return Response(test)
