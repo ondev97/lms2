@@ -33,7 +33,7 @@ urlpatterns = [
     path('updatemodulefile/<int:pk>/',views.UpdateModuleFile,name='update_modulefile'),
     path('deletemodulefile/<int:pk>/',views.DeleteModuleFile,name='delete_modulefile'),
     path('getmodulefiles/<int:pk>/',views.GetModuleFiles,name='read_modulefile'),
-    path('getmodule/mobile/<int:pk>/',views.GetModuleFiles,name='read_modulefile'),
+    path('getmodule/mobile/<int:pk>/',views.GetModulesMobile,name='read_modulefile'),
 
     # urls for coupon generation
     path('coupon/<int:count>/<int:pk>/',views.CouponGenerator,name='coupon_generator'),
