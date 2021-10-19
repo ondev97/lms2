@@ -66,6 +66,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
     address = models.CharField(max_length=500, null=True, blank=True)
+    is_blocked = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
