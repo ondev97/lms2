@@ -102,7 +102,7 @@ def TestLoginView(request):
             "status": status
         })
     token = Token.objects.filter(user=user).first()
-    if token:
+    if token and user.check_password(request.data['password']):
         status = True
     return Response({
         "status" : status
